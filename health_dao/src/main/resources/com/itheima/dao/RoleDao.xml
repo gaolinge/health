@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.itheima.dao.RoleDao">
+
+    <insert id="saveRole" parameterType="Role" keyProperty="id" useGeneratedKeys="true">
+        insert into t_role values (null,#{name},#{keyword},#{description})
+    </insert>
+
+    <select id="findPage" parameterType="String" resultType="Role">
+        select * from t_role
+        <where>
+            <if test="value != null and value!='' and value != 'null'">
+                and name like '%${value}%'
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

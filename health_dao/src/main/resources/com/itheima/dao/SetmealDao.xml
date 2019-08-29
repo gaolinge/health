@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.itheima.dao.SetmealDao">
+    <select id="findSetmealByKeyword" parameterType="String" resultType="Setmeal" >
+        select * from t_setmeal
+        <where>
+            <if test="value != null and value != '' and value != 'null'">
+                and name like '%${value}%' or code like '%${value}%' or helpCode like '%${value}%'
+            </if>
+        </where>
+    </select>
+    
+    <insert id="addSetmeal" parameterType="Setmeal" keyProperty="id" useGeneratedKeys="true">
+        insert into t_setmeal values (null,#{name},#{code},#{helpCode},#{sex},#{age},#{price},#{remark},#{attention},#{img})
+    </insert>
+
+
+    <!--使用多步查询-->
+    <resultMap id="SetMealMap" type="Setmeal">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="code" column="code"/>
+        <result property="helpCode" column="helpCode"/>
+        <result property="sex" column="sex"/>
+        <result property="age" column="age"/>
+        <result property="price" column="price"/>
+        <result property="remark" column="remark"/>
+        <result property="attention" column="attention"/>
+        <result property="img" column="img"/>
+        <collection property="checkGroups" ofType="CheckGroup" column="id" select="com.itheima.dao.CheckGroupDao.findCheckGroupById"/>
+    </resultMap>
+    <select id="findById" parameterType="int" resultMap="SetMealMap">
+        select * from t_setmeal where id = #{id}
+    </select>
+</mapper>

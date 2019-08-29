@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.itheima.dao.CheckGroupDao">
+    <insert id="saveCheckGroup" parameterType="checkGroup">
+        <selectKey keyColumn="id" keyProperty="id" resultType="int" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+        insert into t_checkgroup values (null,#{code},#{name},#{helpCode},#{sex},#{remark},#{attention})
+    </insert>
+
+    <select id="findCheckGroupByKeyword" parameterType="String" resultType="CheckGroup">
+        select * from t_checkgroup
+        <where>
+            <if test="value != null and value!='' and value != 'null'">
+                and name like '%${value}%'
+            </if>
+        </where>
+    </select>
+
+    
+    <resultMap id="CheckGroupMap" type="CheckGroup">
+        <id property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="helpCode" column="helpCode"/>
+        <result property="sex" column="sex"/>
+        <result property="remark" column="remark"/>
+        <result property="attention" column="attention"/>
+        <collection property="checkItems" ofType="CheckItem" column="id" select="com.itheima.dao.CheckItemDao.findCheckItemsById" />
+    </resultMap>
+    <select id="findCheckGroupById" parameterType="int" resultMap="CheckGroupMap">
+        select * from t_setmeal_checkgroup sc ,t_checkgroup c where c.id=sc.checkgroup_id and sc.setmeal_id = #{id}
+    </select>
+</mapper>

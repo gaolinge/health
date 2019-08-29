@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.itheima.dao.CheckItemDao">
+    <select id="findCheckItemByKeyword" parameterType="String" resultType="CheckItem">
+        select * from t_checkitem
+        <where>
+            <if test="value != null and value != '' and value != 'null'">
+                and name like '%${value}%'
+            </if>
+        </where>
+    </select>
+    
+    
+    <select id="findCheckItemsById" parameterType="int" resultType="CheckItem">
+        select * from t_checkitem c ,t_checkgroup_checkitem cc where c.id=cc.checkitem_id and cc.checkgroup_id = #{id}
+    </select>
+</mapper>

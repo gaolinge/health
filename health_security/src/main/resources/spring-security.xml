@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--suppress SpringFacetInspection -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <context:component-scan base-package="com.itheima"/>
+
+    <!--配置匿名访问-->
+    <security:http pattern="js/**" security="none"/>
+    <security:http pattern="css/**" security="none"/>
+    <security:http pattern="img/**" security="none"/>
+    <security:http pattern="/login.html" security="none"/>
+    <security:http pattern="/register.html" security="none"/>
+
+
+
+
+    <!--
+        配置需要权限才能访问的资源
+            auto-config属性:true自动配置
+            use-expressions属性:false不使用表达式
+    -->
+
+    <security:http auto-config="true" use-expressions="true">
+
+        <security:intercept-url pattern="/a.html" access="hasAnyAuthority('add')"/>
+        <security:intercept-url pattern="/b.html" access="hasAnyAuthority('delete')"/>
+        <security:intercept-url pattern="/c.html" access="hasAnyAuthority('update')"/>
+        <security:intercept-url pattern="/d.html" access="hasAnyAuthority('select')"/>
+
+
+        <!--配置拦截路径: pattern:拦截规则; access属性:需要什么角色才能访问-->
+        <security:intercept-url pattern="/**" access="hasAnyAuthority('ROLE_ADMIN')"/>
+
+        <!--配置登入页面-->
+        <security:form-login
+            login-page="/login.html"
+            username-parameter="username"
+            password-parameter="password"
+            login-processing-url="/login.do"
+            authentication-failure-url="/login.html"
+            authentication-success-forward-url="/index.html"/>
+
+        <!--不使用加密-->
+        <security:csrf disabled="true"/>
+
+
+        <!--配置退出-->
+        <security:logout logout-url="/logOut.do" logout-success-url="/login.html" invalidate-session="true"/>
+
+    </security:http>
+
+
+
+
+
+    <!--配置认证管理器-->
+    <security:authentication-manager>
+        <security:authentication-provider user-service-ref="userService">
+            <!--<security:user-service>
+                &lt;!&ndash;指明那个用户名,设置什么角色,&ndash;&gt;
+                <security:user name="admin" authorities="ROLE_ADMIN" password="{noop}123456"/>
+            </security:user-service>-->
+            <!--指定加密方式-->
+            <security:password-encoder ref="bCryptPasswordEncoder"/>
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+
+    <!--动态查询数据库登入,配置实现类接口-->
+    <bean id="userService" class="com.itheima.user.SpringSecurityUserService"/>
+
+
+    <!--设置使用加密方式-->
+    <bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+    <!--开启注解方式控制-->
+    <security:global-method-security pre-post-annotations="enabled"/>
+
+    <mvc:annotation-driven/>
+</beans>

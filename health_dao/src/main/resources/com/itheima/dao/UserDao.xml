@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.itheima.dao.UserDao">
+
+    <insert id="addUser" parameterType="User" keyProperty="id" useGeneratedKeys="true">
+        insert into t_user values (null,#{birthday},#{gender},#{username},#{password},#{remark},#{station},#{telephone})
+    </insert>
+
+    <select id="findPage" parameterType="String" resultType="User">
+        select * from t_user
+        <where>
+            <if test="value != null and value!='' and value != 'null'">
+                and name like '%${value}%'
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

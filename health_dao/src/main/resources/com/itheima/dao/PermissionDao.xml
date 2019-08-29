@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.itheima.dao.PermissionDao">
+    <select id="findPage" parameterType="String" resultType="Permission">
+        select * from t_permission
+        <where>
+            <if test="value != null and value != '' and value != 'null'">
+                and name like '%${value}%'
+            </if>
+        </where>
+    </select>
+
+</mapper>
